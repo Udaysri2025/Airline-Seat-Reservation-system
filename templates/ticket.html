@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Your Flight Ticket</h2>
+    
+    <div class="ticket-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+        <div>
+            <h3>{{ booking.flight.flight_number }}</h3>
+            <p>PNR: {{ booking.pnr }}</p>
+        </div>
+        <div style="text-align: right;">
+            <p><strong>Status:</strong> {{ booking.status }}</p>
+            <p><strong>Booking Date:</strong> {{ booking.booking_date.strftime('%Y-%m-%d') }}</p>
+        </div>
+    </div>
+    
+    <div class="flight-info" style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-radius: 5px;">
+        <div class="flight-time" style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <div>
+                <h4>{{ booking.flight.departure }}</h4>
+                <p>{{ booking.flight.departure_time.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+            <div style="text-align: center;">
+                <p>→</p>
+                <p>{{ duration }}</p>
+            </div>
+            <div style="text-align: right;">
+                <h4>{{ booking.flight.destination }}</h4>
+                <p>{{ booking.flight.arrival_time.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="passengers-list">
+        <h3>Passengers</h3>
+        {% for passenger in booking.passengers %}
+            <div class="passenger" style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
+                <p><strong>{{ passenger.first_name }} {{ passenger.last_name }}</strong> ({{ passenger.age }}, {{ passenger.gender }})</p>
+                {% if passenger.passport %}
+                    <p>Passport: {{ passenger.passport }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div class="ticket-footer" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <p><strong>Total Price:</strong> ${{ booking.total_price }}</p>
+        </div>
+        <div>
+            {% if booking.status == "Paid" %}
+                <a href="/check-in/{{ booking.pnr }}" class="btn btn-accent">Check In</a>
+            {% else %}
+                <a href="/payment/{{ booking.pnr }}" class="btn">Complete Payment</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

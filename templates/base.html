@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airline Reservation System</title>
+    <style>
+        /* Main Styles */
+        :root {
+            --primary-color: #006400;
+            --secondary-color: #004d00;
+            --accent-color: #009900;
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --error-color: #d9534f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-gray);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #cccccc;
+        }
+
+        .auth-buttons a {
+            color: var(--white);
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 5px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .auth-buttons a.login {
+            border: 1px solid var(--white);
+        }
+
+        .auth-buttons a.signup {
+            background-color: var(--accent-color);
+        }
+
+        .auth-buttons a:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .main-content {
+            padding: 30px 0;
+            min-height: calc(100vh - 120px);
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: var(--white);
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 30px;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-accent:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .error {
+            color: var(--error-color);
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .success {
+            color: var(--primary-color);
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #dff0d8;
+            border-radius: 4px;
+        }
+
+        .flight-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: box-shadow 0.3s;
+        }
+
+        .flight-card:hover {
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .flight-info {
+            flex: 1;
+        }
+
+        .flight-time {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .flight-time span {
+            margin: 0 10px;
+        }
+
+        .flight-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .flight-actions {
+            margin-left: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 15px;
+                justify-content: center;
+            }
+
+            .auth-buttons {
+                margin-top: 15px;
+            }
+
+            .flight-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .flight-actions {
+                margin-left: 0;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">Airline Reservations</div>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    {% if 'user_id' in session %}
+                        <li><a href="/logout">Logout</a></li>
+                    {% else %}
+                        <li><a href="/login">Login</a></li>
+                        <li><a href="/signup">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Airline Reservation System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

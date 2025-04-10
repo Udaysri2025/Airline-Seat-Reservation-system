@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Check-In</h2>
+    
+    <div class="flight-info" style="margin-bottom: 20px;">
+        <h3>{{ booking.flight.flight_number }}</h3>
+        <div class="flight-time" style="display: flex; justify-content: space-between;">
+            <div>
+                <p>{{ booking.flight.departure }}</p>
+                <p>{{ booking.flight.departure_time.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+            <div>→</div>
+            <div>
+                <p>{{ booking.flight.destination }}</p>
+                <p>{{ booking.flight.arrival_time.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+        </div>
+        <p>PNR: {{ booking.pnr }}</p>
+    </div>
+    
+    <div class="passengers-list">
+        <h3>Passengers</h3>
+        {% for passenger in booking.passengers %}
+            <div class="passenger" style="margin-bottom: 15px; padding: 10px; border: 1px solid #eee; border-radius: 5px;">
+                <p><strong>{{ passenger.first_name }} {{ passenger.last_name }}</strong> ({{ passenger.age }}, {{ passenger.gender }})</p>
+                {% if passenger.passport %}
+                    <p>Passport: {{ passenger.passport }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div class="check-in-actions" style="margin-top: 20px;">
+        <a href="/seat-selection/{{ booking.pnr }}" class="btn">Select Seats</a>
+    </div>
+</div>
+{% endblock %}

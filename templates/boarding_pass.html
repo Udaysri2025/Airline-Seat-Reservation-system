@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div style="border: 2px solid var(--primary-color); border-radius: 10px; overflow: hidden;">
+        <!-- Boarding Pass Header -->
+        <div style="background-color: var(--primary-color); color: white; padding: 15px; text-align: center;">
+            <h2 style="margin: 0;">BOARDING PASS</h2>
+            <p style="margin: 5px 0 0; font-size: 14px;">{{ booking.flight.flight_number }} | {{ booking.flight.departure }} to {{ booking.flight.destination }}</p>
+        </div>
+        
+        <!-- Flight Info -->
+        <div style="padding: 15px; border-bottom: 1px dashed #ccc;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <div>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">DEPARTURE</p>
+                    <p style="font-size: 18px; font-weight: bold;">{{ booking.flight.departure_time.strftime('%H:%M') }}</p>
+                    <p>{{ booking.flight.departure_time.strftime('%a, %d %b %Y') }}</p>
+                </div>
+                <div style="text-align: center;">
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">DURATION</p>
+                    <p>{{ duration }}</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">ARRIVAL</p>
+                    <p style="font-size: 18px; font-weight: bold;">{{ booking.flight.arrival_time.strftime('%H:%M') }}</p>
+                    <p>{{ booking.flight.arrival_time.strftime('%a, %d %b %Y') }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Passenger Info -->
+        <div style="padding: 15px; border-bottom: 1px dashed #ccc;">
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">PASSENGER</p>
+                    <p style="font-size: 16px; font-weight: bold;">
+                        {{ booking.passengers[0].first_name }} {{ booking.passengers[0].last_name }}
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">PNR</p>
+                    <p style="font-size: 16px; font-weight: bold;">{{ booking.pnr }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seat Info -->
+        <div style="padding: 15px; border-bottom: 1px dashed #ccc;">
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">SEAT</p>
+                    <p style="font-size: 16px; font-weight: bold;">{{ booking.seats[0].seat_number }}</p>
+                </div>
+                <div>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">CLASS</p>
+                    <p style="font-size: 16px; font-weight: bold;">ECONOMY</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">GATE</p>
+                    <p style="font-size: 16px; font-weight: bold;">{{ gate }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Barcode -->
+        <div style="padding: 15px; text-align: center; background-color: #f9f9f9;">
+            <div style="height: 50px; background: repeating-linear-gradient(90deg, #000, #000 2px, transparent 2px, transparent 4px); margin-bottom: 10px;"></div>
+            <p style="font-size: 12px; color: #666;">{{ booking.pnr }}</p>
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px; text-align: center;">
+        <p>Please arrive at the gate at least 45 minutes before departure.</p>
+        <a href="/" class="btn">Return to Home</a>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .btn, nav, footer {
+            display: none !important;
+        }
+        
+        body {
+            background-color: white;
+        }
+        
+        .card {
+            box-shadow: none;
+            border: none;
+        }
+    }
+</style>
+{% endblock %}

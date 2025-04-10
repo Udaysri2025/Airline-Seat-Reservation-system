@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Passenger Details</h2>
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+    
+    <div class="flight-info">
+        <h3>{{ flight.flight_number }}</h3>
+        <div class="flight-time">
+            <span>{{ flight.departure }}</span>
+            <span>→</span>
+            <span>{{ flight.destination }}</span>
+        </div>
+        <p>Departure: {{ flight.departure_time.strftime('%Y-%m-%d %H:%M') }}</p>
+        <p>Price per passenger: ${{ flight.price }}</p>
+    </div>
+    
+    <form action="/process-booking" method="POST">
+        <input type="hidden" name="flight_id" value="{{ flight.id }}">
+        
+        <div class="form-group">
+            <label for="num_passengers">Number of Passengers</label>
+            <select id="num_passengers" name="num_passengers" class="form-control" required>
+                {% for i in range(1, 5) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div id="passengers-container">
+            <!-- Passenger forms will be added here by JavaScript -->
+        </div>
+        
+        <button type="submit" class="btn">Continue to Payment</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('num_passengers').addEventListener('change', function() {
+        const numPassengers = parseInt(this.value);
+        const container = document.getElementById('passengers-container');
+        container.innerHTML = '';
+        
+        for (let i = 1; i <= numPassengers; i++) {
+            const passengerDiv = document.createElement('div');
+            passengerDiv.className = 'passenger-form';
+            passengerDiv.innerHTML = `
+                <h3>Passenger ${i}</h3>
+                <div class="form-group">
+                    <label for="first_name_${i}">First Name</label>
+                    <input type="text" id="first_name_${i}" name="first_name_${i}" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name_${i}">Last Name</label>
+                    <input type="text" id="last_name_${i}" name="last_name_${i}" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="age_${i}">Age</label>
+                    <input type="number" id="age_${i}" name="age_${i}" class="form-control" required min="1">
+                </div>
+                <div class="form-group">
+                    <label for="gender_${i}">Gender</label>
+                    <select id="gender_${i}" name="gender_${i}" class="form-control" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="passport_${i}">Passport Number (Optional)</label>
+                    <input type="text" id="passport_${i}" name="passport_${i}" class="form-control">
+                </div>
+            `;
+            container.appendChild(passengerDiv);
+        }
+    });
+    
+    // Trigger change event to show first passenger form
+    document.getElementById('num_passengers').dispatchEvent(new Event('change'));
+</script>
+
+<style>
+    .passenger-form {
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    
+    .passenger-form h3 {
+        margin-bottom: 15px;
+        color: var(--primary-color);
+    }
+</style>
+{% endblock %}

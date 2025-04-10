@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flight-list">
+    <h2>Available Flights</h2>
+    {% if flights %}
+        <div class="flights-container">
+            {% for flight in flights %}
+                <div class="flight-card">
+                    <div class="flight-header">
+                        <h3>{{ flight.airline }} ({{ flight.flight_number }})</h3>
+                        <span class="price">${{ flight.price }}</span>
+                    </div>
+                    <div class="flight-details">
+                        <div class="route">
+                            <span class="departure">{{ flight.departure }}</span>
+                            <span class="arrow">→</span>
+                            <span class="arrival">{{ flight.destination }}</span>
+                        </div>
+                        <div class="timings">
+                            <span>Depart: {{ flight.departure_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                            <span>Arrive: {{ flight.arrival_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                        <div class="seats">Seats available: {{ flight.available_seats }}</div>
+                    </div>
+                    <div class="flight-actions">
+                        <a href="{{ url_for('book_flight', flight_id=flight.id, passengers=passengers) }}" 
+                           class="btn btn-book">
+                           Book Now ({{ passengers }} passenger{% if passengers > 1 %}s{% endif %})
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-flights">No flights found matching your criteria.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+<style>
+.flight-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+.flight-header {
+    display: flex;
+    justify-content: space-between;
+}
+.btn-book {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+}
+</style>
