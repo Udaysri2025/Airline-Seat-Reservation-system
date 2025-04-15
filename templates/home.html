@@ -2,24 +2,92 @@
 
 {% block content %}
 <div class="container">
-    <h1>Welcome to Airline Booking System</h1>
+    <h1>Welcome to AmiGo Airlines</h1>
     
     {% if 'user_id' in session %}
     <div class="search-form">
-        <h2>Search Flights</h2>
+        <h2>Book your Flight</h2>
         <form action="{{ url_for('search_flights') }}" method="POST">
-            <div class="form-group">
-                <label for="departure">Departure City:</label>
-                <input type="text" id="departure" name="departure" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="destination">Destination City:</label>
-                <input type="text" id="destination" name="destination" required>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div class="input-group">
+                    <label for="departure">From</label>
+                    <select name="departure" id="departure" required>
+                        <option value="">Select Origin</option>
+                        <option>Delhi (DEL)</option>
+			<option>Visakhapatnam (VTZ)</option>
+                        <option>Mumbai (BOM)</option>
+                        <option>Bangalore (BLR)</option>
+			<option>Hyderabad (HYD)</option>
+                        <option>Chennai (MAA)</option>
+                        <option>Kolkata (CCU)</option>
+                        <option>Ahmedabad (AMD)</option>
+			<option>Pune (PNQ)</option>
+                        <option>Goa (GOI)</option>
+                        <option>Kochi (COK)</option>
+                        <option>Jaipur (JAI)</option>
+                        <option>Lucknow (LKO)</option>
+                        <option>Varanasi (VNS)</option>
+                        <option>Guwahati (GAU)</option>
+                        <option>Patna (PAT)</option> 
+                        <option>Bhubaneswar (BBI)</option>
+                        <option>Nagpur (NAG)</option>
+                        <option>Indore (IDR)</option>
+                        <option>Coimbatore (CJB)</option>
+                        <option>Trivandrum (TRV)</option>
+                        <option>Mangalore (IXE)</option>
+                        <option>Vadodara (BDQ)</option>
+                        <option>Amritsar (ATQ)</option>
+                        <option>Dehradun (DED)</option>
+                        <option>Ranchi (IXR)</option>
+                        <option>Raipur (RPR)</option>
+                        <option>Jodhpur (JDH)</option>
+                        <option>Udaipur (UDR)</option>
+                        <option>Srinagar (SXR)</option>
+                        <option>Leh (IXL)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="destination">To</label>
+                    <select name="destination" id="destination" required>
+                        <option value="">Select Destination</option>
+                        <option>Delhi (DEL)</option>
+			<option>Visakhapatnam (VTZ)</option>
+                        <option>Mumbai (BOM)</option>
+                        <option>Bangalore (BLR)</option>
+			<option>Hyderabad (HYD)</option>
+                        <option>Chennai (MAA)</option>
+                        <option>Kolkata (CCU)</option>
+                        <option>Ahmedabad (AMD)</option>
+			<option>Pune (PNQ)</option>
+                        <option>Goa (GOI)</option>
+                        <option>Kochi (COK)</option>
+                        <option>Jaipur (JAI)</option>
+                        <option>Lucknow (LKO)</option>
+                        <option>Varanasi (VNS)</option>
+                        <option>Guwahati (GAU)</option>
+                        <option>Patna (PAT)</option> 
+                        <option>Bhubaneswar (BBI)</option>
+                        <option>Nagpur (NAG)</option>
+                        <option>Indore (IDR)</option>
+                        <option>Coimbatore (CJB)</option>
+                        <option>Trivandrum (TRV)</option>
+                        <option>Mangalore (IXE)</option>
+                        <option>Vadodara (BDQ)</option>
+                        <option>Amritsar (ATQ)</option>
+                        <option>Dehradun (DED)</option>
+                        <option>Ranchi (IXR)</option>
+                        <option>Raipur (RPR)</option>
+                        <option>Jodhpur (JDH)</option>
+                        <option>Udaipur (UDR)</option>
+                        <option>Srinagar (SXR)</option>
+                        <option>Leh (IXL)</option>
+                    </select>
+                </div>
             </div>
             
             <div class="input-group">
-                <label for="travel_date">Travel Date:</label>
+                <label for="travel_date">🗓️ Travel Date:</label>
                 <input type="date" 
                        id="travel_date" 
                        name="travel_date" 
@@ -29,12 +97,12 @@
                        class="disable-past">
             </div>
             
-            <div class="form-group">
+            <div class="input-group">
                 <label for="passengers">Passengers:</label>
                 <input type="number" id="passengers" name="passengers" min="1" value="1" required>
             </div>
             
-            <button type="submit" class="btn">Search Flights</button>
+            <button type="submit" class="btn">🔎 Search Flights</button>
         </form>
     </div>
     {% else %}
@@ -62,4 +130,42 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<style>
+    /* Add this CSS to make sure the form looks good */
+    .input-group {
+        margin-bottom: 15px;
+    }
+    
+    .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+    
+    .input-group input,
+    .input-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    
+    .btn {
+        background-color: #006400;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    .btn:hover {
+        background-color: #004d00;
+    }
+</style>
 {% endblock %}

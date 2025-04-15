@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Add html2pdf library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 <div class="card" style="max-width: 600px; margin: 0 auto;">
-    <div style="border: 2px solid var(--primary-color); border-radius: 10px; overflow: hidden;">
+    <div id="boarding-pass" style="border: 2px solid var(--primary-color); border-radius: 10px; overflow: hidden;">
         <!-- Boarding Pass Header -->
         <div style="background-color: var(--primary-color); color: white; padding: 15px; text-align: center;">
             <h2 style="margin: 0;">BOARDING PASS</h2>
@@ -13,16 +18,16 @@
         <div style="padding: 15px; border-bottom: 1px dashed #ccc;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                 <div>
-                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">DEPARTURE</p>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">🛫DEPARTURE</p>
                     <p style="font-size: 18px; font-weight: bold;">{{ booking.flight.departure_time.strftime('%H:%M') }}</p>
                     <p>{{ booking.flight.departure_time.strftime('%a, %d %b %Y') }}</p>
                 </div>
                 <div style="text-align: center;">
-                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">DURATION</p>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">🕒DURATION</p>
                     <p>{{ duration }}</p>
                 </div>
                 <div style="text-align: right;">
-                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">ARRIVAL</p>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">🛬ARRIVAL</p>
                     <p style="font-size: 18px; font-weight: bold;">{{ booking.flight.arrival_time.strftime('%H:%M') }}</p>
                     <p>{{ booking.flight.arrival_time.strftime('%a, %d %b %Y') }}</p>
                 </div>
@@ -33,13 +38,13 @@
         <div style="padding: 15px; border-bottom: 1px dashed #ccc;">
             <div style="display: flex; justify-content: space-between;">
                 <div>
-                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">PASSENGER</p>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">🕵️PASSENGER</p>
                     <p style="font-size: 16px; font-weight: bold;">
                         {{ booking.passengers[0].first_name }} {{ booking.passengers[0].last_name }}
                     </p>
                 </div>
                 <div style="text-align: right;">
-                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">PNR</p>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">🏷️PNR</p>
                     <p style="font-size: 16px; font-weight: bold;">{{ booking.pnr }}</p>
                 </div>
             </div>
@@ -49,15 +54,15 @@
         <div style="padding: 15px; border-bottom: 1px dashed #ccc;">
             <div style="display: flex; justify-content: space-between;">
                 <div>
-                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">SEAT</p>
-                    <p style="font-size: 16px; font-weight: bold;">{{ booking.seats[0].seat_number }}</p>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">💺SEAT</p>
+                    <p style="font-size: 16px; font-weight: bold;">{{ booking.passengers[0].seat_number }}</p>
                 </div>
                 <div>
                     <p style="font-size: 12px; color: #666; margin-bottom: 5px;">CLASS</p>
                     <p style="font-size: 16px; font-weight: bold;">ECONOMY</p>
                 </div>
                 <div style="text-align: right;">
-                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">GATE</p>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 5px;">🚪GATE</p>
                     <p style="font-size: 16px; font-weight: bold;">{{ gate }}</p>
                 </div>
             </div>
@@ -70,20 +75,44 @@
         </div>
     </div>
     
-    <div style="margin-top: 20px; text-align: center;">
-        <p>Please arrive at the gate at least 45 minutes before departure.</p>
-        <a href="/" class="btn">Return to Home</a>
+    <!-- DOWNLOAD BUTTON SECTION -->
+    <div style="text-align: center; padding: 15px; background: #f5f5f5; border-radius: 8px; margin-top: 20px;">
+        <button onclick="downloadBoardingPass()" style="
+            background: #006400;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: inline-block;
+            margin: 10px;
+        ">
+        <i class="fas fa-download" style="margin-right: 8px;"></i> 
+        Download Boarding Pass
+        </button>
+        
+        <a href="/" class="btn" style="
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 25px;
+        ">
+        <i class="fas fa-home" style="margin-right: 8px;"></i>
+        Return to Home
+        </a>
     </div>
 </div>
 
 <style>
     @media print {
-        .btn, nav, footer {
+        .btn, nav, footer, button {
             display: none !important;
         }
         
         body {
-            background-color: white;
+            background-color: white !important;
         }
         
         .card {
@@ -91,5 +120,44 @@
             border: none;
         }
     }
+
+    /* Button hover effects */
+    button:hover {
+        background: #004d00 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
 </style>
+
+<script>
+    function downloadBoardingPass() {
+        const element = document.getElementById('boarding-pass');
+        const button = event.target;
+        
+        // Show loading state
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+        button.disabled = true;
+        
+        // PDF options
+        const opt = {
+            margin: 10,
+            filename: 'Boarding_Pass_{{ booking.pnr }}.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 3, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Generate PDF
+        html2pdf()
+            .set(opt)
+            .from(element)
+            .save()
+            .then(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+    }
+</script>
 {% endblock %}

@@ -1,52 +1,162 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card">
-    <h2>Payment</h2>
-    
-    <div class="flight-info">
-        <h3>{{ flight.flight_number }}</h3>
-        <div class="flight-time">
-            <span>{{ flight.departure }}</span>
-            <span>→</span>
-            <span>{{ flight.destination }}</span>
+<div class="container" style="padding: 30px 20px;">
+    <h1 style="margin-bottom: 20px;">Payment</h1>
+    <div class="payment-form" style="padding: 20px;">
+        <div class="flight-info" style="margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
+            <h3 style="margin-bottom: 10px;">{{ flight.flight_number }}</h3>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span>{{ flight.departure }}</span>
+                <span>→</span>
+                <span>{{ flight.destination }}</span>
+            </div>
+            <p style="margin: 5px 0; font-size: 14px;">Departure: {{ flight.departure_time.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p style="margin: 5px 0; font-size: 14px;">Total: ${{ "%.2f"|format(total_price) }}</p>
         </div>
-        <p>Departure: {{ flight.departure_time.strftime('%Y-%m-%d %H:%M') }}</p>
-        <p>Total Price: ${{ "%.2f"|format(total_price) }}</p>
-        <p>PNR: {{ booking.pnr }}</p>
+        
+        <form action="{{ url_for('complete_booking') }}" method="POST" onsubmit="return validateCardNumber()">
+            <!-- Card Fields - Side by Side -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div class="input-group">
+                    <label for="card_number" style="font-size: 14px; margin-bottom: 5px; display: block;">Card Number</label>
+                    <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" 
+                           style="padding: 10px; font-size: 14px; width: 100%; box-sizing: border-box;"
+                           oninput="formatCardNumber(this)"
+                           onkeydown="return preventNonNumericalInput(event)">
+                    <small id="cardError" style="color: #d9534f; font-size: 12px; margin-top: 5px; display: none;">
+                        Please enter exactly 16 digits (will appear as 4 groups of 4 digits)
+                    </small>
+                </div>
+                <div class="input-group">
+                    <label for="card_name" style="font-size: 14px; margin-bottom: 5px; display: block;">Name on Card</label>
+                    <input type="text" id="card_name" name="card_name" required
+                           style="padding: 10px; font-size: 14px; width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
+            
+            <!-- Expiry/CVV - Side by Side -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div class="input-group">
+                    <label for="expiry" style="font-size: 14px; margin-bottom: 5px; display: block;">Expiry Date</label>
+                    <input type="month" id="expiry" name="expiry" required
+                           style="padding: 10px; font-size: 14px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div class="input-group">
+                    <label for="cvv" style="font-size: 14px; margin-bottom: 5px; display: block;">CVV</label>
+                    <input type="text" id="cvv" name="cvv" placeholder="123" required
+                           pattern="\d{3,4}" title="3 or 4 digit security code"
+                           style="padding: 10px; font-size: 14px; width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
+            
+            <button type="submit" class="pay-button" style="padding: 12px; font-size: 15px; margin-top: 5px; width: 100%;">
+                ✓ Pay Now
+            </button>
+        </form>
     </div>
-    
-    <form action="/process-payment" method="POST">
-        <div class="form-group">
-            <label for="card_number">Card Number</label>
-            <input type="text" id="card_number" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" required>
-        </div>
-        <div class="form-group">
-            <label for="card_name">Name on Card</label>
-            <input type="text" id="card_name" name="card_name" class="form-control" required>
-        </div>
-        <div class="form-row" style="display: flex; gap: 15px;">
-            <div class="form-group" style="flex: 1;">
-                <label for="expiry">Expiry Date</label>
-                <input type="text" id="expiry" name="expiry" class="form-control" placeholder="MM/YY" required>
-            </div>
-            <div class="form-group" style="flex: 1;">
-                <label for="cvv">CVV</label>
-                <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" required>
-            </div>
-        </div>
-        <button type="submit" class="btn">Pay Now</button>
-    </form>
 </div>
 
 <style>
-    .form-row {
-        display: flex;
-        gap: 15px;
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
     }
-    
-    .form-row .form-group {
-        flex: 1;
+    .payment-form {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        padding: 25px;
+    }
+    .flight-info {
+        background: #f8f9fa;
+        border-left: 4px solid #006400;
+    }
+    .input-group {
+        margin-bottom: 15px;
+    }
+    .input-group input {
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        transition: border-color 0.15s ease-in-out;
+    }
+    .input-group input:focus {
+        border-color: #006400;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25);
+    }
+    .pay-button {
+        background: linear-gradient(to right, #006400, #008000);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+    }
+    .pay-button:hover {
+        background: linear-gradient(to right, #005000, #006400);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 </style>
+
+<script>
+    function formatCardNumber(input) {
+        // Get cursor position before changes
+        const cursorPos = input.selectionStart;
+        const initialValue = input.value;
+        
+        // Remove all non-digit characters
+        let value = input.value.replace(/\D/g, '');
+        
+        // Add space after every 4 digits
+        value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+        
+        // Update the input value
+        input.value = value;
+        
+        // Adjust cursor position
+        const addedChars = value.length - initialValue.length;
+        const newCursorPos = cursorPos + addedChars;
+        input.setSelectionRange(newCursorPos, newCursorPos);
+        
+        // Validate length (16 digits without counting spaces)
+        const digitsOnly = value.replace(/\s/g, '');
+        const errorElement = document.getElementById('cardError');
+        
+        errorElement.style.display = digitsOnly.length === 16 || digitsOnly.length === 0 ? 'none' : 'block';
+    }
+
+    function preventNonNumericalInput(e) {
+        // Allow: backspace, delete, tab, escape, enter
+        if ([46, 8, 9, 27, 13].includes(e.keyCode) ||
+            // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.keyCode === 65 && e.ctrlKey === true) ||
+            (e.keyCode === 67 && e.ctrlKey === true) ||
+            (e.keyCode === 86 && e.ctrlKey === true) ||
+            (e.keyCode === 88 && e.ctrlKey === true) ||
+            // Allow: home, end, left, right
+            (e.keyCode >= 35 && e.keyCode <= 39)) {
+                return;
+        }
+        // Prevent if not a number
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    }
+
+    function validateCardNumber() {
+        const cardNumber = document.getElementById('card_number').value;
+        const digitsOnly = cardNumber.replace(/\s/g, '');
+        const errorElement = document.getElementById('cardError');
+        
+        if (digitsOnly.length !== 16) {
+            errorElement.style.display = 'block';
+            document.getElementById('card_number').focus();
+            return false;
+        }
+        return true;
+    }
+</script>
 {% endblock %}

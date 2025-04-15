@@ -1,39 +1,101 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card">
-    <h2>Check-In</h2>
-    
-    <div class="flight-info" style="margin-bottom: 20px;">
-        <h3>{{ booking.flight.flight_number }}</h3>
-        <div class="flight-time" style="display: flex; justify-content: space-between;">
-            <div>
-                <p>{{ booking.flight.departure }}</p>
-                <p>{{ booking.flight.departure_time.strftime('%Y-%m-%d %H:%M') }}</p>
-            </div>
-            <div>→</div>
-            <div>
-                <p>{{ booking.flight.destination }}</p>
-                <p>{{ booking.flight.arrival_time.strftime('%Y-%m-%d %H:%M') }}</p>
+<div class="container" style="max-width: 600px; margin: 30px auto; padding: 0 15px;">
+    <div class="checkin-card" style="background: white; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); padding: 25px;">
+        <h1 style="color: #006400; margin-bottom: 20px; font-size: 24px; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 28px;">🏷️</span> Check-In for Booking: {{ booking.pnr }}
+        </h1>
+        
+        {% if booking %}
+        <div class="flight-info" style="background: #f8f9fa; border-left: 4px solid #006400; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 10px 15px; align-items: baseline;">
+                <span style="font-weight: bold; color: #555;">Flight:</span>
+                <span>{{ booking.flight.flight_number }}</span>
+                
+                <span style="font-weight: bold; color: #555;">Route:</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>{{ booking.flight.departure }}</span>
+                    <span style="color: #006400;">→</span>
+                    <span>{{ booking.flight.destination }}</span>
+                </div>
+                
+                <span style="font-weight: bold; color: #555;">Departure:</span>
+                <span>{{ booking.flight.departure_time.strftime('%Y-%m-%d %H:%M') }}</span>
             </div>
         </div>
-        <p>PNR: {{ booking.pnr }}</p>
-    </div>
-    
-    <div class="passengers-list">
-        <h3>Passengers</h3>
-        {% for passenger in booking.passengers %}
-            <div class="passenger" style="margin-bottom: 15px; padding: 10px; border: 1px solid #eee; border-radius: 5px;">
-                <p><strong>{{ passenger.first_name }} {{ passenger.last_name }}</strong> ({{ passenger.age }}, {{ passenger.gender }})</p>
-                {% if passenger.passport %}
-                    <p>Passport: {{ passenger.passport }}</p>
-                {% endif %}
-            </div>
-        {% endfor %}
-    </div>
-    
-    <div class="check-in-actions" style="margin-top: 20px;">
-        <a href="/seat-selection/{{ booking.pnr }}" class="btn">Select Seats</a>
+
+        <form method="POST" action="{{ url_for('checkin', pnr=booking.pnr) }}" style="margin-top: 25px;">
+            <h3 style="color: #006400; margin-bottom: 15px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                <span>🕵️</span> Passenger List
+            </h3>
+            
+            <ul class="passenger-list" style="list-style: none; padding: 0; margin: 0 0 25px 0;">
+                {% for passenger in passengers %}
+                <li style="padding: 12px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                    <span>
+                        <strong>{{ passenger.first_name }} {{ passenger.last_name }}</strong>
+                    </span>
+                    <span style="background: {% if passenger.seat_number %}#e8f5e9{% else %}#ffebee{% endif %}; 
+                              color: {% if passenger.seat_number %}#006400{% else %}#c62828{% endif %}; 
+                              padding: 4px 10px; 
+                              border-radius: 12px; 
+                              font-size: 13px;">
+                        {% if passenger.seat_number %}
+                        Seat: {{ passenger.seat_number }}
+                        {% else %}
+                        Not assigned
+                        {% endif %}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <button type="submit" class="btn-checkin" style="background: linear-gradient(to right, #006400, #008000); 
+                        color: white; 
+                        border: none; 
+                        border-radius: 4px; 
+                        padding: 12px 20px; 
+                        font-size: 16px; 
+                        font-weight: bold; 
+                        cursor: pointer; 
+                        width: 100%; 
+                        transition: all 0.3s ease;">
+                <span style="margin-right: 8px;">✅</span> Complete Check-In
+            </button>
+        </form>
+        {% else %}
+        <div class="error-message" style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 4px; border-left: 4px solid #c62828;">
+            <p style="margin: 0; font-weight: bold;">⚠️ Booking information not available</p>
+        </div>
+        {% endif %}
     </div>
 </div>
+
+<style>
+    .btn-checkin:hover {
+        background: linear-gradient(to right, #005000, #006400) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .passenger-list li {
+        transition: background-color 0.2s ease;
+    }
+    
+    .passenger-list li:hover {
+        background-color: #f5f5f5;
+    }
+    
+    @media (max-width: 576px) {
+        .flight-info {
+            grid-template-columns: 1fr !important;
+            gap: 8px !important;
+        }
+        
+        .flight-info span:first-child {
+            margin-top: 8px;
+        }
+    }
+</style>
 {% endblock %}
