@@ -178,7 +178,8 @@ def signup():
             flash('Email already registered', 'error')
             return redirect(url_for('signup'))
         
-        hashed_password = generate_password_hash(password, method='sha256')
+        # Use 'pbkdf2:sha256' instead of just 'sha256'
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         new_user = User(username=username, email=email, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
@@ -187,7 +188,6 @@ def signup():
         return redirect(url_for('login'))
     
     return render_template('signup.html')
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
