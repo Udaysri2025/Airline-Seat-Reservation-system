@@ -52,7 +52,7 @@ Airline-Seat-Reservation-system/
 
 1. Clone the repository
 
-git clone https://github.com/your-username/airline-seat-reservation-system.git  
+git clone https://github.com/Udaysri2025/airline-seat-reservation-system.git  
 cd airline-seat-reservation-system  
 
 2. Create virtual environment
