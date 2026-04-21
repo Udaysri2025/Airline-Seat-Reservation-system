@@ -29,6 +29,7 @@ A web-based Airline Seat Reservation System built using Flask and SQLite. This a
 
 ## 📁 Project Structure
 
+```
 Airline-Seat-Reservation-system/
 │
 ├── app.py
@@ -45,6 +46,7 @@ Airline-Seat-Reservation-system/
     ├── seats.html
     ├── signup.html
     └── ticket.html
+```
 
 ---
 
